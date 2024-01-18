@@ -1,31 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SGPA Calculator</title>
- <link rel="stylesheet" src="style.css">
-   <script src="java.js"></script>
- 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-
-  <form id="sgpaForm">
     <h2>SGPA Calculator</h2>
 
-    <label for="subject1">Subject 1 (Credits)</label>
-    <input type="number" id="subject1Credits" required>
-    <label for="subject1">Subject 1 (Grade)</label>
-    <input type="text" id="subject1Grade" required>
+    <label for="numSubjects">Number of Subjects:</label>
+    <input type="number" id="numSubjects" placeholder="Enter the number of subjects">
 
-    <!-- Repeat the above two lines for each subject (subject2, subject3, ..., subject8) -->
+    <div id="subjectInputs"></div>
 
-    <button type="button" onclick="calculateSGPA()">Calculate SGPA</button>
+    <button onclick="calculateSGPA()">Calculate SGPA</button>
 
     <div id="result"></div>
-  </form>
 
-  
+    <script>
+        function generateInputs() {
+            const numSubjects = parseInt(document.getElementById('numSubjects').value);
+            const subjectInputsDiv = document.getElementById('subjectInputs');
 
+            subjectInputsDiv.innerHTML = '';
+
+            for (let i = 1; i <= numSubjects; i++) {
+                const creditInput = document.createElement('input');
+                creditInput.type = 'number';
+                creditInput.placeholder = `Enter credits for Subject ${i}`;
+                creditInput.id = `credit_${i}`;
+
+                const gradeSelect = document.createElement('select');
+                gradeSelect.id = `grade_${i}`;
+
+                const grades = [10, 9, 8, 7, 6, 5, 0];
+
+                for (const grade of grades) {
+                    const option = document.createElement('option');
+                    option.value = grade;
+                    option.text = grade;
+                    gradeSelect.add(option);
+                }
+
+                subjectInputsDiv.appendChild(document.createElement('br'));
+                subjectInputsDiv.appendChild(document.createElement('br'));
+                subjectInputsDiv.appendChild(document.createTextNode(`Subject ${i}:`));
+                subjectInputsDiv.appendChild(document.createElement('br'));
+                subjectInputsDiv.appendChild(label(`Credits:`, creditInput));
+                subjectInputsDiv.appendChild(label(`Grade:`, gradeSelect));
+            }
+        }
+
+        function label(text, element) {
+            const labelElem = document.createElement('label');
+            labelElem.appendChild(document.createTextNode(text));
+            labelElem.appendChild(element);
+            return labelElem;
+        }
+
+        function calculateSGPA() {
+            const numSubjects = parseInt(document.getElementById('numSubjects').value);
+            let totalCredits = 0;
+            let totalPoints = 0;
+
+            for (let i = 1; i <= numSubjects; i++) {
+                const credits = parseInt(document.getElementById(`credit_${i}`).value);
+                const grade = parseInt(document.getElementById(`grade_${i}`).value);
+
+                totalCredits += credits;
+                totalPoints += credits * grade;
+            }
+
+            const sgpa = totalPoints / totalCredits;
+
+            document.getElementById('result').innerHTML = `<h3>Your SGPA is: ${sgpa.toFixed(2)}</h3>`;
+        }
+
+        document.getElementById('numSubjects').addEventListener('change', generateInputs);
+    </script>
 </body>
+<footer>
+    Created by Abishek
+</footer>
 </html>
